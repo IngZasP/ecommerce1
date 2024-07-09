@@ -15,10 +15,8 @@ const DataProvider = ({children}) => {
         }
     }
 
-    return <DataContext.Provider value={{cart, setCart, buyProducts}}>
-
-        {children}
-        
+    return <DataContext.Provider value={{cart, setCart, buyProducts}}> 
+        {children} 
     </DataContext.Provider>
 
 }

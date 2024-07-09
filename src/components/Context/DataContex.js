@@ -2,7 +2,7 @@ import React, { createContext, useState } from 'react';
 
 const DataContext = createContext();
 
-const DataProvider = ({children}) => {
+const DataProvider = ({children}) => { 
     const [cart, setCart] = useState([]);
     
     const buyProducts = (product) => {
@@ -16,7 +16,9 @@ const DataProvider = ({children}) => {
     }
 
     return <DataContext.Provider value={{cart, setCart, buyProducts}}>
+
         {children}
+        
     </DataContext.Provider>
 
 }

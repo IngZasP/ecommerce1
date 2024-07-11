@@ -1,25 +1,35 @@
 import React, { useState, useContext } from "react";
-import { Modal, StyleSheet, Text, Pressable, View, FlatList } from "react-native";
-import  {DataContext}  from "../Context/DataContex";
+import { Modal, StyleSheet, Text, Pressable, View, FlatList, Image } from "react-native";
+import { DataContext } from "../Context/DataContex";
+import FlashMessage, { showMessage } from 'react-native-flash-message';
 
 const ModalComponent = () => {
   const { cart, setCart, buyProducts } = useContext(DataContext);
   const [modalVisible, setModalVisible] = useState(false);
   const total = cart.reduce((acc, el) => acc + el.quanty * el.price, 0);
-  
+
   const handleBuyPress = (product) => {
     buyProducts(product);
   };
 
-  const handleDreasePress = (product) => {
+  const handleDecreasePress = (product) => {
     const productRepeat = cart.find((item) => item.id === product.id);
-
-    productRepeat.quanty !== 1 &&
+    if (productRepeat.quanty !== 1) {
       setCart(cart.map((item) => (item.id === product.id ? { ...product, quanty: productRepeat.quanty - 1 } : item)));
+    }
   };
 
   const handleDeletePress = (product) => {
     setCart(cart.filter((item) => item.id !== product.id));
+  };
+
+  const alertDelete = () => {
+    showMessage({
+      message: "Alerta",
+      description: "El producto se ha eliminado.",
+      type: "success",
+      icon: "auto",
+    });
   };
 
   return (
@@ -39,34 +49,31 @@ const ModalComponent = () => {
             <Pressable style={[styles.button, styles.buttonClose]} onPress={() => setModalVisible(!modalVisible)}>
               <Text style={styles.textStyle}>❌</Text>
             </Pressable>
-            <Text style={styles.modalText}>Cart Items:</Text>
+            <Text style={styles.modalText}>Carrito de Compras:</Text>
             <FlatList
               data={cart}
               renderItem={({ item }) => (
                 <View style={styles.cartItem}>
-                  <Text style={styles.modalTextProduct}>{item.productName}</Text>
-
-                  <Text style={styles.modalTextProduct}>
-                    <Pressable onPress={() => handleDreasePress(item)}>
-                      <Text>➖</Text>
+                  <Image source={{ uri: item.img }} style={styles.productImage} />
+                  <View style={styles.productDetails}>
+                    <Text style={styles.productName}>{item.productName}</Text>
+                    <View style={styles.quantityControl}>
+                      <Pressable onPress={() => handleDecreasePress(item)}>
+                        <Text style={styles.controlButton}>➖</Text>
+                      </Pressable>
+                      <Text style={styles.productQuantity}>{item.quanty}</Text>
+                      <Pressable onPress={() => handleBuyPress(item)}>
+                        <Text style={styles.controlButton}>➕</Text>
+                      </Pressable>
+                    </View>
+                    <Text style={styles.productTotal}>Total: ${item.quanty * item.price}</Text>
+                    <Pressable onPress={() => { handleDeletePress(item); alertDelete(); }}>
+                      <Text style={styles.deleteButton}>Eliminar</Text>
                     </Pressable>
-
-                    <Text style={styles.modalTextProduct}>{item.quanty}</Text>
-
-                    <Pressable onPress={() => handleBuyPress(item)}>
-                      <Text>➕</Text>
-                    </Pressable>
-                  </Text>
-
-                  <Text style={styles.modalTextProduct}>
-                    Total: ${item.quanty * item.price}
-                    <Pressable onPress={() => handleDeletePress(item)}>
-                      <Text>❌</Text>
-                    </Pressable>
-                  </Text>
+                  </View>
                 </View>
               )}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => item.id.toString()}
             />
             <Text style={styles.totalText}>Total: ${total}</Text>
           </View>
@@ -81,13 +88,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
-    marginTop: 22,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalView: {
     backgroundColor: "white",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    padding: 35,
+    padding: 20,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -103,12 +110,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     elevation: 2,
-    left: 120,
   },
   buttonClose: {
-    backgroundColor: "#111111",
+    backgroundColor: "#ff5c5c",
+    position: "absolute",
+    right: 20,
+    top: 20,
   },
   textStyle: {
+    color: "white",
     fontWeight: "bold",
     textAlign: "center",
   },
@@ -116,31 +126,68 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontSize: 22,
     fontWeight: "bold",
+    textAlign: "center",
   },
   modalButton: {
-    position: "center",
-    bottom: 30,
-    left: 150,
     backgroundColor: "#111111",
     padding: 10,
     borderRadius: 30,
+    position: "absolute",
+    bottom: 30,
+    right: 30,
   },
   cartIcon: {
-    fontSize: 20,
+    fontSize: 24,
+    color: "white",
   },
   cartItem: {
-    marginBottom: 10,
+    flexDirection: "row",
+    backgroundColor: "#f9f9f9",
+    borderRadius: 10,
+    padding: 10,
+    marginVertical: 5,
+    alignItems: "center",
   },
-  modalTextProduct: {
-    marginBottom: 1,
+  productImage: {
+    width: 70,
+    height: 70,
+    borderRadius: 10,
+  },
+  productDetails: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  productName: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  quantityControl: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 5,
+  },
+  controlButton: {
+    fontSize: 20,
+    marginHorizontal: 10,
+  },
+  productQuantity: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  productTotal: {
+    fontSize: 16,
+    color: "green",
+  },
+  deleteButton: {
+    color: "#ff5c5c",
+    marginTop: 5,
+    fontSize: 14,
+  },
+  totalText: {
+    marginTop: 20,
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
-  },
-  totalText: {
-    marginTop: 10,
-    fontSize: 18,
-    fontWeight: "bold",
   },
 });
 

@@ -1,10 +1,23 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { DataContext } from "../Context/DataContex";
-import { Pressable, Text, View, FlatList, Image, StyleSheet } from "react-native";
+import { Pressable, Text, View, FlatList, Image, StyleSheet, TextInput } from "react-native";
 import FlashMessage, { showMessage } from 'react-native-flash-message';
+import { Rating } from 'react-native-ratings';
+import { Ionicons, FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const Products = () => {
   const { buyProducts } = useContext(DataContext);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [ratings, setRatings] = useState({
+    1: 4,
+    2: 5,
+    3: 3,
+    4: 2,
+    5: 4,
+    6: 5
+  });
+
   const productos = [
     {
       id: 1,
@@ -44,6 +57,12 @@ const Products = () => {
     },
   ];
 
+  const navigation = useNavigation();
+
+  const filteredProducts = productos.filter(product =>
+    product.productName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const showAlert = () => {
     console.log("producto añadido");
     showMessage({
@@ -59,26 +78,43 @@ const Products = () => {
     showAlert();
   };
 
+  const handleProductPress = (product) => {
+    navigation.navigate('ProductDetail', { product });
+  };
+
   const renderItem = ({ item }) => (
-    <View style={styles.productCard}>
+    <Pressable style={styles.productCard} onPress={() => handleProductPress(item)}>
       <Image source={{ uri: item.img }} style={styles.productImage} />
+      <Pressable style={styles.favoriteIcon} onPress={() => console.log('Guardar como favorito')}>
+        <FontAwesome name="heart-o" size={24} color="black" />
+      </Pressable>
+      <Pressable style={styles.cartIcon} onPress={() => handleBuyPress(item)}>
+        <Ionicons name="cart-outline" size={24} color="black" />
+      </Pressable>
       <View style={styles.productDetails}>
         <Text style={styles.productName}>{item.productName}</Text>
+        <Rating
+          imageSize={20}
+          readonly
+          startingValue={ratings[item.id]}
+        />
         <Text style={styles.productDescription}>Descripción breve del producto.</Text>
         <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
-        <Pressable style={styles.addButton} onPress={() => handleBuyPress(item)}>
-          <Text style={styles.addButtonText}>Agregar al Carrito</Text>
-        </Pressable>
       </View>
-    </View>
+    </Pressable>
   );
 
   return (
     <View style={styles.container}>
       <FlashMessage position="top" />
-      <Text style={styles.header}>Ecommerce App</Text>
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Buscar productos..."
+        value={searchTerm}
+        onChangeText={setSearchTerm}
+      />
       <FlatList
-        data={productos}
+        data={filteredProducts}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.listContainer}
@@ -100,6 +136,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 12,
     textAlign: "center",
+  },
+  searchBar: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 16,
+    paddingHorizontal: 8,
+    marginHorizontal: 16,
   },
   productCard: {
     backgroundColor: "white",
@@ -140,17 +185,15 @@ const styles = StyleSheet.create({
     color: "#333",
     fontWeight: "bold",
   },
-  addButton: {
-    marginTop: 8,
-    backgroundColor: "#111111",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
+  favoriteIcon: {
+    position: "absolute",
+    top: 10,
+    right: 10,
   },
-  addButtonText: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
+  cartIcon: {
+    position: "absolute",
+    bottom: 10,
+    right: 10,
   },
 });
 

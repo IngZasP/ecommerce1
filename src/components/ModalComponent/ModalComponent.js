@@ -86,8 +86,6 @@ const ModalComponent = () => {
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
-    justifyContent: "flex-end",
-    alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalView: {

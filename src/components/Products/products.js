@@ -5,58 +5,11 @@ import FlashMessage, { showMessage } from 'react-native-flash-message';
 import { Rating } from 'react-native-ratings';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import productos from "./ProducList"
 
 const Products = () => {
   const { buyProducts } = useContext(DataContext);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [ratings, setRatings] = useState({
-    1: 4,
-    2: 5,
-    3: 3,
-    4: 2,
-    5: 4,
-    6: 5
-  });
-
-  const productos = [
-    {
-      id: 1,
-      productName: "Ariel",
-      price: 35,
-      img: "https://www.granodeoro.com.mx/wp-content/uploads/2020/09/9e9f6c38-43d8-3d44-8297-24e0f2ce00f3.png",
-    },
-    {
-      id: 2,
-      productName: "Maruchan",
-      price: 10,
-      img: "https://m.media-amazon.com/images/I/61NXzjX4D8L.jpg",
-    },
-    {
-      id: 3,
-      productName: "Panditas",
-      price: 45,
-      img: "https://cdn.shopify.com/s/files/1/0566/4391/1854/products/7501030452508_03ee3d2b-7f79-4fba-b771-6c8cdd5344a3.png?v=1646582905",
-    },
-    {
-      id: 4,
-      productName: "Salsa Valentina",
-      price: 27,
-      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhG_qHfcgZAtJHdcYu_YTPl2MNxJC46CTOeg&s",
-    },
-    {
-      id: 5,
-      productName: "Cacahuates",
-      price: 15,
-      img: "https://w7.pngwing.com/pngs/480/665/png-transparent-chocolate-coated-peanut-cracker-nuts-caramelized-peanut-cacahuates-food-peanut-pumpkin-seed-thumbnail.png",
-    },
-    {
-      id: 6,
-      productName: "Cheetos flamin hot",
-      price: 16,
-      img: "https://www.cheetos.com/sites/cheetos.com/files/2019-02/Cheetos%20Crunchy%20Flamin%27%20Hot_1.png",
-    },
-  ];
-
+  const [searchTerm, setSearchTerm] = useState(""); 
   const navigation = useNavigation();
 
   const filteredProducts = productos.filter(product =>
@@ -96,7 +49,7 @@ const Products = () => {
         <Rating
           imageSize={20}
           readonly
-          startingValue={ratings[item.id]}
+          startingValue={item.rating}
         />
         <Text style={styles.productDescription}>Descripción breve del producto.</Text>
         <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
@@ -106,13 +59,7 @@ const Products = () => {
 
   return (
     <View style={styles.container}>
-      <FlashMessage position="top" />
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Buscar productos..."
-        value={searchTerm}
-        onChangeText={setSearchTerm}
-      />
+      <FlashMessage position="top" /> 
       <FlatList
         data={filteredProducts}
         renderItem={renderItem}

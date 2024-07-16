@@ -1,19 +1,12 @@
-import React, { useContext, useState }  from 'react';
-import { View, Text, Image, StyleSheet,TextInput } from 'react-native';
+import React from 'react';
+import { View, Text, Image, StyleSheet } from 'react-native';
 
 const ProductDetail = ({ route }) => {
   const { product } = route.params;
-console.log(product);
-  const [searchTerm, setSearchTerm] = useState("");
+  console.log(product); 
 
   return (
-    <View style={styles.container}>      
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Buscar productos..."
-        value={searchTerm}
-        onChangeText={setSearchTerm}
-      />
+    <View style={styles.container}> 
       <Image source={{ uri: product.img }} style={styles.productImage} />
       <Text style={styles.productName}>{product.productName}</Text>
       <Text style={styles.productDescription}>Descripción detallada del producto.</Text>

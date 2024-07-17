@@ -16,8 +16,7 @@ const Products = () => {
     product.productName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const showAlert = () => {
-    console.log("producto añadido");
+  const showAlert = () => { 
     showMessage({
       message: "Alerta",
       description: "Producto Añadido.",
@@ -37,7 +36,7 @@ const Products = () => {
 
   const renderItem = ({ item }) => (
     <Pressable style={styles.productCard} onPress={() => handleProductPress(item)}>
-      <Image source={{ uri: item.img }} style={styles.productImage} />
+      <Image source={{ uri: item.img[0] }} style={styles.productImage} />
       <Pressable style={styles.favoriteIcon} onPress={() => console.log('Guardar como favorito')}>
         <FontAwesome name="heart-o" size={24} color="black" />
       </Pressable>
@@ -50,9 +49,12 @@ const Products = () => {
           imageSize={20}
           readonly
           startingValue={item.rating}
+          ratingColor={"#d4bc5d"}
         />
-        <Text style={styles.productDescription}>Descripción breve del producto.</Text>
         <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
+        <Pressable style={styles.buyButton} onPress={() => handleBuyPress(item)}>
+              <Text style={styles.buyButtonText}>comprar</Text>
+        </Pressable>
       </View>
     </Pressable>
   );
